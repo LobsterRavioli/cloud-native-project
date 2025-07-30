@@ -1,0 +1,12 @@
+vm_defaults:
+  memory: 2048
+  vcpus: 2
+  disk_size: 10
+  os_variant: ubuntu20.04
+  network: default
+  pool: default
+
+vm_list:
+  - name: k8s-master
+  - name: k8s-worker1
+  - name: k8s-worker2

@@ -1,0 +1,16 @@
+- name: Ottieni join command dal master
+  fetch:
+    src: /tmp/kubeadm_join.sh
+    dest: /tmp/kubeadm_join.sh
+    flat: yes
+  delegate_to: k8s-master
+  run_once: true
+
+- name: Copia join command sul nodo
+  copy:
+    src: /tmp/kubeadm_join.sh
+    dest: /tmp/kubeadm_join.sh
+    mode: 0700
+
+- name: Esegui join al cluster
+  shell: bash /tmp/kubeadm_join.sh

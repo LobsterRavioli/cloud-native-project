@@ -1,0 +1,35 @@
+- name: Distruggi VM libvirt (qemu:///system)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true
+
+  vars:
+    vm_list:
+      - k8s-master
+      - k8s-worker1
+      - k8s-worker2
+
+  tasks:
+    - name: Ferma ed elimina VM transitorie (destroy)
+      community.libvirt.virt:
+        name: "{{ item }}"
+        state: destroyed
+        uri: qemu:///system
+      ignore_errors: true
+      loop: "{{ vm_list }}"
+
+    - name: Prova a rimuovere definizione persistente (se esiste)
+      community.libvirt.virt:
+        command: undefine
+        name: "{{ item }}"
+        uri: qemu:///system
+        force: true
+      ignore_errors: true
+      loop: "{{ vm_list }}"
+
+    - name: Elimina disco qcow2
+      file:
+        path: "/var/lib/libvirt/images/{{ item }}.qcow2"
+        state: absent
+      loop: "{{ vm_list }}"
