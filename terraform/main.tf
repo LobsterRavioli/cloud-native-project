@@ -2,6 +2,29 @@ provider "kubernetes" {
   config_path = "${path.module}/kubeconfig.yaml"
 }
 
+provider "helm" {
+  kubernetes = {
+    config_path = "${path.module}/kubeconfig.yaml"
+  }
+}
+
+
+resource "helm_release" "podinfo" {
+  name       = "podinfo"
+  namespace  = "kiratech-test"
+  create_namespace = true
+
+  chart      = "${path.module}/../helm/podinfo"
+
+  values = [
+    file("${path.module}/../helm/podinfo/values.yaml")
+  ]
+
+  atomic = true
+}
+
+
+
 resource "kubernetes_namespace" "kiratech_test" {
   metadata {
     name = "kiratech-test"
@@ -36,3 +59,5 @@ resource "kubernetes_job" "kube_bench" {
     }
   }
 }
+
+# test
