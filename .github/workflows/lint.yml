@@ -1,0 +1,44 @@
+name: Lint Terraform and Ansible
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+      - 'k3s-ansible/**'
+  pull_request:
+    paths:
+      - 'terraform/**'
+      - 'k3s-ansible/**'
+
+jobs:
+  terraform-lint:
+    name: Terraform Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Format Check
+        run: terraform fmt -check -recursive
+      - name: Validate
+        run: terraform validate
+
+  ansible-lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: k3s-ansible
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          pip install ansible-lint
+      - name: Run ansible-lint
+        run: |
+          ansible-lint playbooks/
