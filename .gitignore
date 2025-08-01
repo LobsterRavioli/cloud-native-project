@@ -1,0 +1,55 @@
+# 🌍 Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# 🧰 Ansible
+*.retry
+*.log
+*.facts
+*.vault
+ansible.cfg         # se è locale e non parte del progetto
+inventory/*         # se usi file dinamici o locali
+!inventory/hosts.ini  # mantieni se è parte del progetto
+
+# ⛑️ Helm
+*.tgz
+charts/
+tmpcharts/
+helmfile.lock
+.values.yaml        # se usi file override locali
+helm/secret-values.yaml
+
+# 🗂️ IDEs & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+.DS_Store
+*.iml
+
+# 🔐 Secrets & config locali
+kubeconfig.yaml
+.env
+.env.*
+*.key
+*.pem
+
+# 🐘 GitHub Actions cache
+.github/workflows/*.log
+.github/workflows/tmp/
+.github/*.log
+
+# 📤 Output / log / report temporanei
+output/
+reports/
+*.log
+*.out
+
+# 🧪 Test
+test-output/
+coverage/
+__pycache__/
