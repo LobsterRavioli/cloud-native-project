@@ -99,7 +99,56 @@ cd k3s-ansible
 vagrant up
 ```
 
-Questi sono i nodi che compongono il cluster:
+#### Modifiche al Vagrantfile
+l Vagrantfile originale è stato modificato per adattare la topologia del cluster e la configurazione di rete al progetto corrente.
+
+| Sezione          | Valore Originale                                             | Valore Modificato                           | Motivo                                    |
+| ---------------- | ------------------------------------------------------------ | ------------------------------------------- | ----------------------------------------- |
+| `NODE_ROLES`     | `["server-0", "server-1", "server-2", "agent-0", "agent-1"]` | `["server-0", "agent-0", "agent-1"]`        | Cluster più leggero (1 master + 2 worker) |
+| `NODE_BOXES`     | 5 voci `['bento/ubuntu-24.04', ...]`                         | 3 voci, una per ciascun nodo definito       | Ridotto per riflettere la nuova topologia |
+| `NETWORK_PREFIX` | `"10.10.10"`                                                 | `"192.168.122"`                             | Allineato alla rete `default` di libvirt  |
+| `vm.network`     | `private_network`, IP e netmask                              | Aggiunto `libvirt__network_name: "default"` | Forza uso rete `default` libvirt          |
+
+
+Queste modifiche garantiscono:
+
+    ✅ Cluster più leggero, ideale per ambienti locali o demo
+
+    ✅ IP statici allineati alla rete libvirt (default)
+
+    ✅ Provisioning stabile usando Vagrant con provider libvirt
+
+📂 File modificato: Vagrantfile
+
+
+#### Modifiche al file inventory.yml
+
+Il file inventory.yml è stato modificato rispetto alla versione originale del progetto per adattarsi all’ambiente locale creato con Vagrant e libvirt.
+Differenze principali:
+| Sezione           | Originale                      | Modificata                           | Motivo                                     |
+| ----------------- | ------------------------------ | ------------------------------------ | ------------------------------------------ |
+| **IP server**     | `192.16.35.11`                 | `192.168.122.100`                    | Allineato alla rete `libvirt` (`default`)  |
+| **IP agent**      | `192.16.35.12`, `192.16.35.13` | `192.168.122.101`, `192.168.122.102` | Idem come sopra                            |
+| **ansible\_user** | `debian`                       | `vagrant`                            | Utente predefinito nelle VM Vagrant        |
+| **k3s\_version**  | *(assente)*                    | `v1.30.2+k3s1`                       | Versione K3s desiderata esplicitamente     |
+| **k3s\_become**   | *(assente)*                    | `true`                               | Richiesto per eseguire `k3s` con privilegi |
+
+
+Queste modifiche garantiscono:
+
+    Corretta connessione Ansible alle VM generate da Vagrant
+
+    Installazione coerente della versione di K3s desiderata
+
+    Esecuzione privilegiata dei task dove necessario (become: true)
+
+Queste modifiche garantiscono:
+
+    ✅ Connessione corretta di Ansible alle VM create da Vagrant
+
+    ✅ Installazione della versione desiderata di K3s
+
+    ✅ Esecuzione con permessi elevati dove richiesto (become: true)
 
 |Ruolo|Hostname|Indirizzo IP|
 |---|---|---|
@@ -136,6 +185,24 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+#### Modifiche al file values.yaml di kube-prometheus-stack
+Alcune sezioni del file values.yaml sono state personalizzate per:
+
+    Esporre Grafana via NodePort
+
+    Garantire aggiornamenti in rolling update senza downtime
+
+    | Sezione            | Valore Originale | Valore Modificato                                    | Motivo                                        |
+| ------------------ | ---------------- | ---------------------------------------------------- | --------------------------------------------- |
+| `service.type`     | *(non definito)* | `NodePort`                                           | Permette accesso diretto a Grafana da browser |
+| `service.nodePort` | *(non definito)* | `30080`                                              | Espone Grafana su `http://<ip-node>:30080`    |
+| `strategy`         | `{}` *(vuoto)*   | `RollingUpdate` con `maxSurge=1`, `maxUnavailable=1` | Abilita rollout senza downtime                |
+
+Queste modifiche garantiscono che il servizio Grafana sia accessibile via browser e che i pod vengano aggiornati in modo sicuro e progressivo durante i deploy.
+
+File modificato: helm/kube-prometheus-stack/values.yaml
+
 
 ## 🧪 Benchmark di Sicurezza
 
@@ -210,5 +277,7 @@ File: `.github/workflows/lint.yml`
 - Benchmark sicurezza eseguito
 
 - CI funzionante  
+
+
 
 ---
