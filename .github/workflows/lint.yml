@@ -13,7 +13,6 @@ on:
       - 'helm/**'
 
 jobs:
-
   terraform-lint:
     name: Terraform Lint
     runs-on: ubuntu-latest
@@ -44,50 +43,6 @@ jobs:
           tflint --init
           tflint
 
-    name: Terraform Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Init
-        run: terraform init -backend=false
-
-      - name: Format Check
-        run: terraform fmt -check -recursive
-
-      - name: Validate
-        run: terraform validate
-
-      - name: Install TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
-      - name: Run TFLint
-        run: tflint --init && tflint
-
-    name: Terraform Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-      - name: Init
-        run: terraform init -backend=false
-      - name: Format Check
-        run: terraform fmt -check -recursive
-      - name: Validate
-        run: terraform validate
-
-
   ansible-lint:
     name: Ansible Lint
     runs-on: ubuntu-latest
@@ -96,14 +51,15 @@ jobs:
         working-directory: k3s-ansible
     steps:
       - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
           pip install ansible-lint
+
       - name: Run ansible-lint
-        run: |
-          ansible-lint playbooks/
+        run: ansible-lint playbooks/
 
   helm-lint:
     name: Helm Lint
@@ -113,18 +69,19 @@ jobs:
         working-directory: helm
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
       - name: Update chart dependencies
         run: |
           for chart in $(find . -maxdepth 1 -mindepth 1 -type d); do
             helm dependency update "$chart"
           done
+
       - name: Run helm lint on all charts
         run: |
           for chart in $(find . -maxdepth 1 -mindepth 1 -type d); do
             helm lint "$chart"
           done
-
-
