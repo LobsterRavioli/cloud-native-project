@@ -115,6 +115,9 @@ vagrant ssh server-0
 kubectl get nodes
 ```
 
+![Nodi del cluster](screenshots/cluster_nodes.png)
+
+
 ### 5. Setup Terraform per Kubernetes
 
 ```bash
@@ -148,6 +151,9 @@ I Log e report sono disponibili in: `./benchmarks/kube-bench-<data>.log`
 Le credenziali per l'accesso a grafana:
 - adminUser: admin
 - adminPassword: prom-operator
+
+![Grafana Dashboard](screenshots/grafana_dashboard.png)
+
 
 ## Rolling Update dell’Applicazione
 
