@@ -2625,7 +2625,12 @@ prometheusOperator:
 
   ## Strategy of the deployment
   ##
-  strategy: {}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
 
   ## Prometheus-Operator v0.39.0 and later support TLS natively.
   ##
