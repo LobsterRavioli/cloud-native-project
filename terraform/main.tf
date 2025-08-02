@@ -10,11 +10,11 @@ provider "helm" {
 
 
 resource "helm_release" "podinfo" {
-  name       = "podinfo"
-  namespace  = "kiratech-test"
+  name             = "podinfo"
+  namespace        = "kiratech-test"
   create_namespace = true
 
-  chart      = "${path.module}/../helm/podinfo"
+  chart = "${path.module}/../helm/podinfo"
 
   values = [
     file("${path.module}/../helm/podinfo/values.yaml")
@@ -66,9 +66,9 @@ resource "helm_release" "kube_prometheus_stack" {
   namespace        = "monitoring"
   create_namespace = true
 
-  chart            = "${path.module}/../helm/kube-prometheus-stack"
-  atomic           = true
-  timeout          = 600
+  chart   = "${path.module}/../helm/kube-prometheus-stack"
+  atomic  = true
+  timeout = 600
 
   values = [
     file("${path.module}/../helm/kube-prometheus-stack/values.yaml") # se presente
