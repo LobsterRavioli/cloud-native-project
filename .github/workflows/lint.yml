@@ -42,6 +42,7 @@ jobs:
       - name: Run ansible-lint
         run: |
           ansible-lint playbooks/
+
   helm-lint:
     name: Helm Lint
     runs-on: ubuntu-latest
@@ -53,6 +54,11 @@ jobs:
       - name: Install Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - name: Update chart dependencies
+        run: |
+          for chart in $(find . -maxdepth 1 -mindepth 1 -type d); do
+            helm dependency update "$chart"
+          done
       - name: Run helm lint on all charts
         run: |
           for chart in $(find . -maxdepth 1 -mindepth 1 -type d); do
