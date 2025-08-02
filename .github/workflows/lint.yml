@@ -5,10 +5,12 @@ on:
     paths:
       - 'terraform/**'
       - 'k3s-ansible/**'
+      - 'helm/**'
   pull_request:
     paths:
       - 'terraform/**'
       - 'k3s-ansible/**'
+      - 'helm/**'
 
 jobs:
   terraform-lint:
