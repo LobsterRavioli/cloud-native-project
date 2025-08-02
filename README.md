@@ -123,7 +123,7 @@ Differenze principali:
 | **k3s\_version**  | *(assente)*                    | `v1.30.2+k3s1`                       | Versione K3s desiderata esplicitamente     |
 | **k3s\_become**   | *(assente)*                    | `true`                               | Richiesto per eseguire `k3s` con privilegi |
 
-
+#### Nodi del cluster
 |Ruolo|Hostname|Indirizzo IP|
 |---|---|---|
 |**Master**|`server-0`|`192.168.122.100`|
