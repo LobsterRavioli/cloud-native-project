@@ -144,6 +144,7 @@ I Log e report sono disponibili in: `./benchmarks/kube-bench-<data>.log`
 | Servizio | Metodo di Accesso | URL di Accesso da Browser                                    | Note                        |
 | -------- | ----------------- | ------------------------------------------------------------ | --------------------------- |
 | Grafana  | NodePort          | [http://192.168.122.100:30080](http://192.168.122.100:30080) | Accesso diretto via browser |
+
 Le credenziali per l'accesso a grafana:
 - adminUser: admin
 - adminPassword: prom-operator
