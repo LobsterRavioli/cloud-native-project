@@ -60,4 +60,20 @@ resource "kubernetes_job" "kube_bench" {
   }
 }
 
+
+resource "helm_release" "kube_prometheus_stack" {
+  name             = "kube-prometheus-stack"
+  namespace        = "monitoring"
+  create_namespace = true
+
+  chart            = "${path.module}/../helm/kube-prometheus-stack"
+  atomic           = true
+  timeout          = 600
+
+  values = [
+    file("${path.module}/../helm/kube-prometheus-stack/values.yaml") # se presente
+  ]
+}
+
+
 # test
