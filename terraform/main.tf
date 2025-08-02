@@ -74,6 +74,3 @@ resource "helm_release" "kube_prometheus_stack" {
     file("${path.module}/../helm/kube-prometheus-stack/values.yaml") # se presente
   ]
 }
-
-
-# test
