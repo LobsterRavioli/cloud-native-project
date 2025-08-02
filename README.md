@@ -122,10 +122,11 @@ kubectl get nodes
 
 ```bash
 # Estrai il kubeconfig dal nodo master
-vagrant ssh server-0 -c 'sudo cat /etc/rancher/k3s/k3s.yaml' > terraform/kubeconfig.yaml
+sudo vagrant ssh server-0 -c 'sudo cat /etc/rancher/k3s/k3s.yaml' | sudo tee ../terraform/kubeconfig.yaml > /dev/null
+
 
 # Sostituisci l'indirizzo 127.0.0.1 con l'IP privato del master (es. 192.168.122.100)
-sed -i 's/127.0.0.1/192.168.122.100/g' kubeconfig.yaml
+sed -i 's/127.0.0.1/192.168.122.100/g' ../terraform/kubeconfig.yaml
 ```
 
 ### 6. Definizione del namespace, Run del kube-bench job  e dell'helm chart sul cluster
@@ -211,12 +212,3 @@ File: `.github/workflows/lint.yml`
 - CI funzionante  
 
 ---
-
-  
-
-## Screenshot 
-
-  
-
----
-  
