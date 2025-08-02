@@ -69,5 +69,3 @@ jobs:
           for chart in $(find . -maxdepth 1 -mindepth 1 -type d); do
             helm lint "$chart"
           done
-
-
