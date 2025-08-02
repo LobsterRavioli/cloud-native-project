@@ -163,7 +163,6 @@ E' stato modificato il file values.yml del chart kube-proetheus-stack
 
 ```yaml
   ## Strategy of the deployment
-  ##
   strategy:
     type: RollingUpdate
     rollingUpdate:
