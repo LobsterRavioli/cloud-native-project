@@ -63,15 +63,15 @@ resource "kubernetes_job" "kube_bench" {
 
 resource "helm_release" "kube_prometheus_stack" {
   name             = "kube-prometheus-stack"
-  namespace        = "monitoring"
-  create_namespace = true
+  namespace        = kubernetes_namespace.kiratech_test.metadata[0].name
+  create_namespace = false  # non serve, perché la namespace è già creata
 
   chart   = "${path.module}/../helm/kube-prometheus-stack"
   atomic  = true
   timeout = 600
 
   values = [
-    file("${path.module}/../helm/kube-prometheus-stack/values.yaml") # se presente
+    file("${path.module}/../helm/kube-prometheus-stack/values.yaml")
   ]
 }
 

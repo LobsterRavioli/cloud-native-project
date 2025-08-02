@@ -23,8 +23,8 @@ Il tutto viene eseguito su macchine virtuali gestite tramite Ansible e Terraform
 - **Kubernetes** – Cluster container-orchestration
 - **Helm** – Deploy di un'applicazione multi-servizio
 - **CI/CD** – Pipeline GitHub Actions per linting
-- **Tool provisioning VM** – es: Vagrant + VirtualBox / libvirt / VMware
-- **Benchmark sicurezza** – es: kube-bench / kube-hunter
+- **Tool provisioning VM** – es: Vagrant + Libvirt e QEMU
+- **Benchmark sicurezza** – es: kube-bench
 
 
 ## ⚙️ Scelte Tecniche
@@ -43,7 +43,7 @@ Il tutto viene eseguito su macchine virtuali gestite tramite Ansible e Terraform
 
 
 ## 🏗️ Architettura della Soluzione
-  
+
 
 ## 🛠️ Setup del progetto
 
@@ -95,6 +95,7 @@ sudo virsh net-start default
 ### 3. Avvio VM tramite Vagrant e configurazione 3ks con Ansible
 
 ```bash
+cd k3s-ansible
 vagrant up
 ```
 
@@ -105,6 +106,7 @@ Questi sono i nodi che compongono il cluster:
 |**Master**|`server-0`|`192.168.122.100`|
 |**Worker**|`agent-0`|`192.168.122.101`|
 |**Worker**|`agent-1`|`192.168.122.102`|
+
 ### 4. Verifica del Cluster Kubernetes
 
 Puoi connetterti alla VM master ed eseguire:
@@ -146,10 +148,28 @@ Le credenziali per l'accesso a grafana:
 - adminUser: admin
 - adminPassword: prom-operator
 
+## Rolling Update dell’Applicazione
+
+L’applicazione è deployata tramite Helm con aggiornamenti in modalità rolling, per garantire l’alta disponibilità e ridurre al minimo il downtime durante i rilasci.
+
+E' stato modificato il file values.yml del chart kube-proetheus-stack
+
+```yaml
+  ## Strategy of the deployment
+  ##
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+```
+
+
+
 ## 🧪 Pipeline CI (GitHub Actions)
   
 Ogni push su `main` e ogni PR attiva:
-- ✅ Linting Terraform (`terraform fmt`)
+- ✅ Linting Terraform (`terraform fmt e tf-lint`)
 - ✅ Linting Ansible (`ansible-lint`)
 - ✅ Linting Helm chart (`helm lint`)
 
@@ -163,30 +183,9 @@ File: `.github/workflows/lint.yml`
 
 - Chart Helm di base riadattato da: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
 - Codice ansible per il deploy di 3ks e vagrant file: https://github.com/k3s-io/k3s-ansible
-
-
   
 
 ---
-
-  
-
-## ⏱️ Tempo impiegato
-
-
-
-- Analisi e setup ambiente: X ore
-
-- Provisioning e configurazione: X ore
-
-- Sviluppo Helm chart e CI pipeline: X ore
-
-- Test e benchmark: X ore
-
-  
-
----
-
   
 
 ## ✅ Cosa funziona
@@ -199,14 +198,11 @@ File: `.github/workflows/lint.yml`
 
 - Namespace `kiratech-test`
 
-- Rolling update testato
+- Rolling update
 
 - Benchmark sicurezza eseguito
 
-- CI funzionante
-
-
-  
+- CI funzionante  
 
 ---
 
